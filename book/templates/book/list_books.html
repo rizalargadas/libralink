@@ -1,0 +1,84 @@
+{% extends 'main.html' %}
+{% block title %}Books{% endblock %}
+
+{% block content %}
+<h1 class='text-5xl mt-16 mb-4'>Available Books</h1>
+<a href="{% url 'book:add_book' %}" class='inline-block mt-4 mb-8 py-2 px-6 text-white bg-teal-700 hover:bg-teal-900 rounded'>Add Book</a>
+{% for message in messages %}
+    <div class='font-semibold'>{{message}}</div>
+{% endfor %}
+<div class='flex flex-col lg:flex-row lg:justify-between mb-10'>
+    <section class='w-full lg:w-2/5'>        
+        {% for book in page_obj %}
+        <div class='flex space-x-4'>
+            
+            <div class='w-1/2'>
+                <h3 class='text-2xl mb-2'><a href="{% url 'book:book_detail' book.pk %}" class='hover:text-slate-600'>{{ book.title }}</a></h3>
+                <p><span class='text-slate-900 font-medium'>Author:</span> {{ book.author }}</p>
+                <p><span class='text-slate-900 font-medium'>Genre:</span> {{ book.genre }}</p>
+                {% if book.available_copies <= 0 %}
+                    <p class='text-rose-600 font-medium'>Available Copies: {{ book.available_copies }}</p>
+                {% else %}
+                    <p><span class='text-slate-900 font-medium'>Available Copies:</span> {{ book.available_copies }}</p>
+                {% endif %}
+            </div>
+
+            <div class=''>
+                <img src="{{book.book_cover.url}}" alt="{{ book.title }} Book Cover" class="w-full h-32 object-scale-down">
+            </div>
+        </div>
+        <a href="{% url 'transaction:return' book.id %}" class='inline-block py-2 px-4 bg-slate-700 hover:bg-slate-900 rounded text-white'>Return a Copy</a>
+        <a href="{% url 'transaction:checkout' book.id %}" class='inline-block mt-4 py-2 px-4 bg-stone-700 hover:bg-stone-900 rounded text-white'>Checkout</a>
+            <hr class='border border-black mt-4 mb-4'>
+        {% endfor %}
+        <div id='pagination' class="flex justify-between mt-10 mb-10">
+            {% if page_obj.has_previous %}
+                <div class='space-x-4'>
+                    <a href="?page=1">« first</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                </div>                    
+            {% endif %}
+        
+            <span>
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+        
+            {% if page_obj.has_next %}
+                <div class='space-x-4'>
+                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">last »</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+    <section class='w-full lg:w-1/4'>
+        <div>
+            <h2 class='text-2xl'>Search</h2>
+            <form action="" method="GET">
+                <input type="text" name='q' placeholder='Enter title, author, genre, isbn...' value='{{request.GET.q}}' class='w-full bg-slate-300 mt-2 py-2 px-2 rounded'>
+            </form>
+        </div>
+        
+
+        <div class='mt-6'>
+            <h2 class='text-2xl'>Browse by Genre</h2>
+            <ul class='mt-4 list-disc list-inside'>
+                <li><a href='{% url "book:list_books" %}?q=fiction' class='hover:text-slate-500 hover:font-medium'>Fiction</a></li>
+                <li><a href='{% url "book:list_books" %}?q=adventure' class='hover:text-slate-500 hover:font-medium'>Adventure</a></li>
+                <li><a href='{% url "book:list_books" %}?q=fantasy' class='hover:text-slate-500 hover:font-medium'>Fantasy</a></li>
+                <li><a href='{% url "book:list_books" %}?q=historical' class='hover:text-slate-500 hover:font-medium'>Historical</a></li>
+                <li><a href='{% url "book:list_books" %}?q=travel' class='hover:text-slate-500 hover:font-medium'>Travel</a></li>
+                <li><a href='{% url "book:list_books" %}?q=business' class='hover:text-slate-500 hover:font-medium'>Business</a></li>
+                <li><a href='{% url "book:list_books" %}?q=science-fiction' class='hover:text-slate-500 hover:font-medium'>Science Fiction</a></li>
+                <li><a href='{% url "book:list_books" %}?q=romance' class='hover:text-slate-500 hover:font-medium'>Romance</a></li>
+                <li><a href='{% url "book:list_books" %}?q=mystery' class='hover:text-slate-500 hover:font-medium'>Mystery</a></li>
+                <li><a href='{% url "book:list_books" %}?q=drama' class='hover:text-slate-500 hover:font-medium'>Drama</a></li>
+                <li><a href='{% url "book:list_books" %}?q=biography' class='hover:text-slate-500 hover:font-medium'>Biography</a></li>
+                <li><a href='{% url "book:list_books" %}?q=children' class='hover:text-slate-500 hover:font-medium'>Children's</a></li>
+                <li><a href='{% url "book:list_books" %}?q=history' class='hover:text-slate-500 hover:font-medium'>History</a></li>
+                <li><a href='{% url "book:list_books" %}?q=non-fiction' class='hover:text-slate-500 hover:font-medium'>Non-Fiction</a></li>
+            </ul>           
+        </div>
+    </section>
+</div>
+{% endblock %}

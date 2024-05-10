@@ -1,0 +1,72 @@
+{% extends 'main.html' %}
+{% block title %}Patrons{% endblock %}
+{% comment %} {% block username %}{% endblock %} {% endcomment %}
+
+{% block content %}
+
+<h1 class='mt-16 mb-4 text-3xl'>Our Patrons</h1>
+<a href="{% url 'patron:add_patron' %}" class='inline-block mt-4 mb-8 py-2 px-6 text-white bg-teal-700 hover:bg-teal-900 rounded'>Add Patron</a>
+{% if messages %}
+    {% for message in messages %}
+        <p class='font-semibold'>{{ message }}</p>
+    {% endfor %}
+{% endif %}
+<section class='mt-4 mb-10 flex flex-col lg:flex-row lg:justify-between'>
+    
+    <section class='w-full lg:w-2/3 mt-4'>
+        {% for patron in page_obj %}
+            {% if patron.status == 'green' %}            
+                <a href="{% url 'patron:patron_detail' patron.pk %}" class='inline-block px-2 bg-emerald-400 rounded text-lg font-medium'>{{patron.name}}</a>
+            {% elif patron.status == 'yellow' %}
+                <a href="{% url 'patron:patron_detail' patron.pk %}" class='inline-block px-2 bg-yellow-400 rounded text-lg font-medium'>{{patron.name}}</a>
+            {% elif patron.status == 'red' %}
+                <a href="{% url 'patron:patron_detail' patron.pk %}" class='inline-block px-2 bg-rose-400 rounded text-lg font-medium'>{{patron.name}}</a>
+            {% endif %}
+            <p>{{patron.email}}</p>
+            <p>{{patron.membership_id}}</p>
+
+            <hr class='border-black my-4'>           
+        {% endfor%}
+        <div id='patrons-pagination' class='flex justify-between mt-10 mb-10'>
+            {% if page_obj.has_previous %}
+                <div>
+                    <a href="?page=1">« first</a>
+                    <a href="?page={{page_obj.previous_page_number}}">previous</a>
+                </div>
+            {% endif %}
+                <div><p>Page {{page_obj.number}} of {{page_obj.paginator.num_pages}}</p></div>
+            {% if page_obj.has_next  %}
+                <div>
+                    <a href="?page={{page_obj.next_page_number}}">next</a>
+                    <a href="?page={{page_obj.paginator.num_pages}}">last »</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class='w-full lg:w-1/4'>
+        <div>
+            <h2 class='text-2xl'>Search</h2>
+            <form action="" method="GET">
+                <input type="text" name='q' placeholder="Enter patron's name..." value='{{request.GET.q}}' class='w-full bg-slate-300 mt-2 py-2 px-2 rounded'>
+            </form>
+        </div>
+
+        <div class='mt-6'>
+            <h2 class='text-2xl mb-4'>Browse by Rank</h2>
+            <a href="{% url 'patron:patron_list' %}?q=green" class='inline-block py-2 px-2 mb-2 bg-emerald-400 rounded'>Green Patron</a>
+            <a href="{% url 'patron:patron_list' %}?q=yellow" class='inline-block py-2 px-2 mb-2 bg-yellow-400 rounded'>Yellow Patron</a>
+            <a href="{% url 'patron:patron_list' %}?q=red" class='inline-block py-2 px-2 bg-rose-400 rounded'>Red Patron</a>
+        </div>
+
+        <div class='mt-6'>
+            <h2 class='text-2xl mb-4'>Browse by Account Status</h2>
+            <ul class='mt-4 list-disc list-inside'>
+                <li><a href='{% url "patron:patron_list" %}?q=active' class='hover:text-slate-500 hover:font-medium'>Active Member</a></li>
+                <li><a href='{% url "patron:patron_list" %}?q=deactivated' class='hover:text-slate-500 hover:font-medium'>Deactivated Member</a></li>
+            </ul>
+        </div>
+    </section>
+</section>
+    
+{% endblock %}

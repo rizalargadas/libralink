@@ -1,0 +1,52 @@
+{% extends 'main.html' %}
+{% block title %}{{book.title}}{% endblock %}
+{% block content %}
+<section class='mt-16 mb-8'>
+    {% if messages %}
+        {% for message in messages%}
+            <p class='mb-4 text-teal-700'>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    <h1 class='text-3xl mb-4'>{{ book.title }}</h1>
+    <div class='flex flex-col space-y-10 lg:flex-row lg:space-x-6'>
+        <div class=''>
+            <img src="{{book.book_cover.url}}" alt="{{ book.title }} Book Cover" class="w-1/2 lg:w-full max-h-96 object-cover">
+        </div>
+        <div class='flex flex-col justify-center'>
+            <p><span class='text-slate-950 font-medium'>Author:</span> {{ book.author }}</p>
+            <p><span class='text-slate-950 font-medium'>Genre:</span> {{ book.genre }}</p>
+            <p><span class='text-slate-950 font-medium'>ISBN:</span> {{ book.isbn }}</p>
+            <p><span class='text-slate-950 font-medium'>Publisher:</span> {{ book.publisher }}</p>
+            <p><span class='text-slate-950 font-medium'>Available Copies:</span> {{ book.available_copies }}</p>
+
+            <br>
+            <h2 class='text-xl'>Description:</h2>
+            <p>{{ book.description }}</p>
+        </div>        
+    </div>
+
+
+    <div class='mt-2 flex flex-col lg:flex-row lg:space-x-2'>
+        {% comment %} <a href="{% url 'book:delete_book' book.pk %}" class='inline-block mt-4 py-2 px-4 bg-rose-500 hover:bg-rose-700 text-white rounded'>Remove Book</a> {% endcomment %}
+        <a href="{% url 'book:edit_book' book.pk %}" class='inline-block mt-4 py-2 px-4 bg-slate-700 hover:bg-slate-900 text-white rounded'>Edit Book</a>
+        <a href="{% url 'transaction:return' book.id %}" class='inline-block mt-4 py-2 px-4 bg-slate-700 hover:bg-slate-900 rounded text-white'>Return a Copy</a>
+        <a href="{% url 'transaction:checkout' book.id %}" class='inline-block mt-4 py-2 px-4 bg-stone-700 hover:bg-stone-900 rounded text-white'>Checkout</a>
+    </div>
+
+    <hr class='my-8 border-black'>
+
+    <div>
+        <h2 class='text-4xl mb-6'>Copies on Loans: {{ book.copies_on_loan }}</h2>
+        <div class='mt-2'>
+            {% for transaction in transactions %}
+                {% if transaction.is_returned == False %}
+                    <p><span class='text-slate-950 font-medium'>Patron:</span> <a href="{% url 'patron:patron_detail' transaction.patron.id %}" class='text-slate-500 hover:font-medium'>{{transaction.patron}}</a></p>
+                    <p><span class='text-slate-950 font-medium'>Date Borrowed:</span> {{transaction.date_borrowed}}</p>
+                    <p><span class='text-slate-950 font-medium'>Date Due:</span> {{transaction.date_due}}</p>
+                    <br>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

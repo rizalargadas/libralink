@@ -1,0 +1,69 @@
+{% extends 'main.html' %}
+{% block title %}Checkout {{ book.title }}{% endblock %}
+
+{% block content %}
+<section class="py-8 px-4 mb-10">
+    <div class="w-full overflow-x-auto lg:overflow-visible">
+        <table class="hidden lg:table w-full text-sm text-left text-gray-800">
+            <thead class="text-xs text-stone-200 uppercase bg-slate-700">
+              <tr>
+                  <th scope="col" class="px-6 py-3">ID</th>
+                  <th scope="col" class="px-6 py-3">BOOK</th>
+                  <th scope="col" class="px-6 py-3">PATRON</th>
+                  <th scope="col" class="px-6 py-3">BORROWED DATE</th>
+                  <th scope="col" class="px-6 py-3">DUE DATE</th>
+                  <th scope="col" class="px-6 py-3">RETURNED DATE</th>
+                  <th scope="col" class="px-6 py-3">STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for transaction in page_obj %}
+                    <tr class="border-b bg-stone-100 border-slate-200">
+                        <td class="px-6 py-4">{{ transaction.id }}</td>
+                        <td class="px-6 py-4"><a href="{% url 'book:book_detail' transaction.book.id %}" class='hover:text-slate-500 font-medium'>{{ transaction.book }}</a></td>
+                        <td class="px-6 py-4"><a href="{% url 'patron:patron_detail' transaction.patron.id %}" class='hover:text-slate-500 font-medium'>{{ transaction.patron }}</a></td>
+                        <td class="px-6 py-4">{{ transaction.date_borrowed }}</td>
+                        <td class="px-6 py-4">{{ transaction.date_due }}</td>
+                        <td class="px-6 py-4">{{ transaction.date_returned }}</td>
+                        <td class="px-6 py-4">{{ transaction.is_returned | yesno:"RETURNED,PENDING RETURN" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Mobile View -->
+        <div class="lg:hidden">
+            {% for transaction in page_obj %}
+            <div class="p-4 bg-stone-100 mb-2 rounded">
+                <p><strong>ID:</strong> {{ transaction.id }}</p>
+                <p><strong>Book:</strong> <a href="{% url 'book:book_detail' transaction.book.id %}" class='hover:text-slate-500 font-medium'>{{ transaction.book }}</a></p>
+                <p><strong>Patron:</strong> <a href="{% url 'patron:patron_detail' transaction.patron.id %}" class='hover:text-slate-500 font-medium'>{{ transaction.patron }}</a></p>
+                <p><strong>Borrowed Date:</strong> {{ transaction.date_borrowed }}</p>
+                <p><strong>Due Date:</strong> {{ transaction.date_due }}</p>
+                <p><strong>Returned Date:</strong> {{ transaction.date_returned }}</p>
+                <p><strong>Status:</strong> {{ transaction.is_returned | yesno:"RETURNED,PENDING RETURN" }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class='mt-10 flex justify-between'>
+        {% if page_obj.has_previous %}
+            <div>
+                <a href="?page=1">« First</a>
+                <a href="?page={{page_obj.previous_page_number}}">Previous</a>
+            </div>            
+        {% endif %}
+
+        <div>
+            <p>Page {{page_obj.number}} of {{page_obj.paginator.num_pages}}</p>
+        </div>
+
+        {% if page_obj.has_next %}
+            <div>
+                <a href="?page={{page_obj.next_page_number}}">Next</a>
+                <a href="?page={{page_obj.paginator.num_pages}}">Last »</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

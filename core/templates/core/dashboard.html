@@ -1,0 +1,26 @@
+{% extends 'main.html' %}
+{% block title %}Dashboard{% endblock %}
+{% comment %} {% block username %}{% endblock %} {% endcomment %}
+
+{% block content %}
+
+{% if messages %}
+            <div class='text-center'>
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+{% endif %}
+<section class='mt-16'>
+    {% comment %} <h1 class='text-xl'>Welcome {{ request.user|title }}!</h1> {% endcomment %}
+    <h1 class='text-3xl mb-6'>Welcome to LibraLink!</h1>
+    <p>
+        Greetings, {{request.user|title}}! Welcome to your central hub for managing our library's collections and services. Here, you can efficiently add new books, update current listings, oversee patron activities, and monitor loan transactions. Our system is designed to streamline your daily tasks and enhance our library's operations. Let's ensure a seamless and enriching experience for all our patrons together.
+    </p>
+
+    <div>
+        <h2 class='mt-6 text-2xl'>Quick Links</h2>
+    </div>
+</section>
+    
+{% endblock %}
