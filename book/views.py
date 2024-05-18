@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -9,6 +10,7 @@ from .models import Book
 from transaction.models import Transaction
 
 
+@login_required
 def list_books(request):
     """ Display a list of books, optionally filtered by a search query. """
     query = request.GET.get('q', '').replace('-', ' ')
@@ -31,6 +33,7 @@ def list_books(request):
     return render(request, 'book/list_books.html', {'books': books, 'page_obj': page_obj})
 
 
+@login_required
 def book_detail(request, pk):
     """ Display the details of a single book, along with its related transactions. """
     book = Book.objects.get(pk=pk)
@@ -38,6 +41,7 @@ def book_detail(request, pk):
     return render(request, 'book/book_detail.html', {'book': book, 'transactions': transactions})
 
 
+@login_required
 def add_book(request):
     """ Add a new book to the database. """
     if request.method == 'POST':
@@ -53,6 +57,7 @@ def add_book(request):
         return render(request, 'book/add_book.html', {'form': form})
 
 
+@login_required
 def edit_book(request, pk):
     """ Edit the details of an existing book. """
     book = get_object_or_404(Book, pk=pk)

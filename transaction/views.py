@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -11,6 +12,7 @@ from book.models import Book
 from patron.models import Patron
 
 
+@login_required
 def transaction_list(request):
     transactions = Transaction.objects.all()
     paginator = Paginator(transactions, 5)
@@ -19,6 +21,7 @@ def transaction_list(request):
     return render(request, 'transaction/transaction_list.html', {'transactions': transactions, 'page_obj': page_obj})
 
 
+@login_required
 def transaction_checkout(request, book_pk):
     book = get_object_or_404(Book, pk=book_pk)
     if request.method == 'POST':
@@ -40,6 +43,7 @@ def transaction_checkout(request, book_pk):
     return render(request, 'transaction/checkout.html', {'form': form, 'book': book})
 
 
+@login_required
 def start_return_process(request, book_pk):
     book = get_object_or_404(Book, pk=book_pk)
     if request.method == 'POST':
@@ -59,6 +63,7 @@ def start_return_process(request, book_pk):
     return render(request, 'transaction/return.html', {'form': form, 'book': book})
 
 
+@login_required
 def return_success(request):
     if request.method != 'POST':
         return redirect('book:list_books')
