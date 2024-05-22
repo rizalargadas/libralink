@@ -6,13 +6,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}{% endblock %} | LibraLink</title>
-    {% comment %} <script src="https://cdn.tailwindcss.com"></script> {% endcomment %}
+    <script src="https://cdn.tailwindcss.com"></script>
     {% tailwind_css %}
 </head>
 <body class="bg-stone-200">
     <nav class="height-fit py-4 bg-slate-950 px-5 lg:px-16 flex justify-between items-center drop-shadow-xl">
         <a href="/" class="text-xl lg:text-3xl text-white">LibraLink</a>
-        <div class="hidden lg:flex flex-col lg:flex-row items-center lg:items-center space-y-5 lg:space-y-0 lg:space-x-4">
+        <div class="hidden text-lg lg:flex flex-col lg:flex-row items-center lg:items-center space-y-5 lg:space-y-0 lg:gap-8">
             <a href="{% url 'book:list_books' %}" class="text-white hover:text-stone-300">Books</a>
             <a href="{% url 'patron:patron_list' %}" class="text-white hover:text-stone-300">Patrons</a>
             <a href="{% url 'transaction:transaction_list' %}" class="text-white hover:text-stone-300">Transactions</a>
@@ -20,10 +20,10 @@
             <a href="{% url 'core:logout' %}" class="bg-stone-600 py-2 px-4 rounded text-white hover:bg-stone-800">Logout</a>
             {% endif %}
         </div>
-        <span class="js-mobile-nav-burger text-white lg:hidden cursor-pointer">&#9776;</span>
+        <span class="duration-500 js-mobile-nav-burger text-white lg:hidden cursor-pointer">&#9776;</span>
     </nav>
-    <div class="hidden js-mobile-nav">
-        <div class="height-[w-50%] py-6 px-5 bg-slate-950 flex flex-col items-end text-right gap-6">
+    <div class="hidden js-mobile-nav duration-500">
+        <div class="duration-500 height-[w-50%] py-6 px-5 bg-slate-950 flex flex-col items-end text-right gap-6">
             <a href="{% url 'book:list_books' %}" class="text-white hover:text-stone-300">Books</a>
             <hr class="w-full border-slate-800">
             <a href="{% url 'patron:patron_list' %}" class="text-white hover:text-stone-300">Patrons</a>
@@ -38,7 +38,7 @@
     
     
     <main class="px-5 lg:px-16 min-h-screen">{% block content %}{% endblock %}</main>
-    <footer class="bg-slate-900 py-4">
+    <footer class="bg-slate-900 py-4 text-center">
         <p class="px-5 lg:px-16 text-white">
             © 2024 LibraLink | Designed and Developed by Riza May Largadas
         </p>

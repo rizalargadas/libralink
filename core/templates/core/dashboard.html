@@ -1,9 +1,7 @@
 {% extends 'main.html' %}
 {% block title %}Dashboard{% endblock %}
-{% comment %} {% block username %}{% endblock %} {% endcomment %}
 
 {% block content %}
-
 {% if messages %}
             <div class='text-center'>
                 {% for message in messages %}
@@ -11,16 +9,132 @@
                 {% endfor %}
             </div>
 {% endif %}
-<section class='mt-16'>
+<section class='mt-16 mb-16'>
     {% comment %} <h1 class='text-xl'>Welcome {{ request.user|title }}!</h1> {% endcomment %}
-    <h1 class='text-3xl mb-6'>Welcome to LibraLink!</h1>
+    <h1 class='text-5xl mb-6'>Welcome to LibraLink!</h1>
     <p>
         Greetings, {{request.user|title}}! Welcome to your central hub for managing our library's collections and services. Here, you can efficiently add new books, update current listings, oversee patron activities, and monitor loan transactions. Our system is designed to streamline your daily tasks and enhance our library's operations. Let's ensure a seamless and enriching experience for all our patrons together.
     </p>
 
     <div>
-        <h2 class='mt-6 text-2xl'>Quick Links</h2>
+        <h2 class='mt-6 mb-6 text-3xl'>Quick Links</h2>
+
+        <div class='w-full h-fit p-6 rounded-md bg-slate-400'>
+            <h3 class="uppercase text-2xl font-medium mb-4">Books</h3>
+            <ul class="list-inside list-disc">
+                <li><a href="{% url 'book:add_book' %}" class="hover:text-slate-700 hover:font-semibold">Add Book</a></li>
+                <li>
+                    <p class="inline-block cursor-pointer hover:text-slate-700 hover:font-semibold" onclick="showBooksOnLoan()">Books on Loan</p>
+                    <div class="js-books-on-loan"></div>                
+                </li>
+                <li>
+                    <p class="inline-block hover:text-slate-700 hover:font-semibold cursor-pointer" onclick="showOutOfStockBooks()">Out of Stock Books</p>
+                    <div class="js-out-of-stock-books"></div> 
+                </li>
+            </ul>
+        </div>
+
+        <div class='mt-6 w-full h-fit p-6 rounded-md bg-slate-400'>
+            <h3 class="uppercase text-2xl font-medium mb-4">Patrons</h3>
+            <ul class="list-inside list-disc">
+                <li><a href="{% url 'patron:add_patron' %}" class="hover:text-slate-700 hover:font-semibold">Add Patron</a></li>
+                <li>
+                    <p class="inline-block cursor-pointer hover:text-slate-700 hover:font-semibold" onclick="showRedPatrons()">Red Patrons</p>
+                    <div class="js-red-patrons"></div>                
+                </li>
+            </ul>
+        </div>
+
+        <div class='mt-6 w-full h-fit p-6 rounded-md bg-slate-400'>
+            <h3 class="uppercase text-2xl font-medium mb-4">Transactions</h3>
+            <ul class="list-inside list-disc">
+                <li><a href="{% url 'transaction:transaction_list' %}" class="hover:text-slate-700 hover:font-semibold">All Transactions</a></li>
+                <li>
+                    <p class="inline-block cursor-pointer hover:text-slate-700 hover:font-semibold" onclick="showPendingReturns()">Pending Returns</p>
+                    <div class="js-pending-returns"></div>                
+                </li>
+            </ul>
+        </div>
     </div>
 </section>
+
+<script>
+    let booksOnLoanVisible = false;
+    let outOfStockBooksVisible = false;
+    let redPatronsVisible = false;
+    let pendingReturnsVisible = false;
+
+
+    function showPendingReturns() {
+        const divElement = document.querySelector('.js-pending-returns')
+        if (!pendingReturnsVisible) {
+            divElement.innerHTML = `
+            <ul class="mt-4 mb-4 bg-slate-300 p-4 rounded-md font-medium">
+                {% for transaction in transactions %}
+                    {% if transaction.is_returned == False %}
+                        <li class="mb-2"> » <a href="{% url 'patron:patron_detail' transaction.patron.id %}">{{transaction.patron}}</a> | <a href="{% url 'book:book_detail' transaction.book.id %}">{{transaction.book}}</a> </li>
+                    {% endif %}
+                {% endfor %} 
+            </ul> 
+            `
+        } else {
+            divElement.innerHTML = ''
+        }
+        pendingReturnsVisible = !pendingReturnsVisible
+    }
+
+    function showRedPatrons() {
+        const divElement = document.querySelector('.js-red-patrons')
+        if (!redPatronsVisible) {
+            divElement.innerHTML = `
+            <ul class="mt-4 mb-4 bg-slate-300 p-4 rounded-md font-medium text-rose-600">
+                {% for patron in patrons %}
+                    {% if patron.status == 'red' %}
+                        <li class="mb-2"> » <a href="{% url 'patron:patron_detail' patron.id %}">{{patron}}</a> </li>
+                    {% endif %}
+                {% endfor %} 
+            </ul> 
+            `
+        } else {
+            divElement.innerHTML = ''
+        }
+        redPatronsVisible = !redPatronsVisible
+    }
+    function showBooksOnLoan() {
+        const divElement = document.querySelector('.js-books-on-loan')
+        if (!booksOnLoanVisible) {
+            divElement.innerHTML = `
+                <ul class="mt-4 mb-4 bg-slate-300 p-4 rounded-md font-medium">
+                    {% for book in books %}
+                        {% if book.copies_on_loan > 0 %}
+                            <li class="mb-2"> » <a href="{% url 'book:book_detail' book.id %}">{{book}}</a> </li>
+                        {% endif %}
+                    {% endfor %} 
+                </ul>            
+                `
+        } else {
+            divElement.innerHTML = ''
+        }
+        booksOnLoanVisible = !booksOnLoanVisible        
+        }
+
+    function showOutOfStockBooks() {
+        const divElement = document.querySelector('.js-out-of-stock-books')
+        if (!outOfStockBooksVisible){
+            divElement.innerHTML = `
+                <ul class="mt-4 mb-4 bg-slate-300 p-4 rounded-md font-medium">
+                    {% for book in books %}
+                        {% if book.available_copies <= 0 %}
+                            <li> » <a href="{% url 'book:book_detail' book.id %}">{{book}}</a> </li>
+                        {% endif %}
+                    {% endfor %} 
+                </ul>            
+            `    
+        } else {
+            divElement.innerHTML = ''
+        }
+        outOfStockBooksVisible = !outOfStockBooksVisible       
+    }
+</script> 
     
 {% endblock %}

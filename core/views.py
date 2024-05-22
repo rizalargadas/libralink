@@ -5,12 +5,18 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .forms import CustomAuthenticationForm, CustomUserCreationForm
+from book.models import Book
+from patron.models import Patron
+from transaction.models import Transaction
 
 
 @login_required
 def dashboard(request):
     """ Display the dashboard page for logged-in users. """
-    return render(request, 'core/dashboard.html')
+    books = Book.objects.all()
+    patrons = Patron.objects.all()
+    transactions = Transaction.objects.all()
+    return render(request, 'core/dashboard.html', {'books': books, 'patrons': patrons, 'transactions': transactions})
 
 
 def register(request):
